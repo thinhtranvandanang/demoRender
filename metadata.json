@@ -1,0 +1,8 @@
+
+{
+  "name": "EduAI - Hệ thống giáo dục thông minh",
+  "description": "Nền tảng giáo dục tích hợp AI giúp tạo đề thi, OCR nhận diện bài làm và chấm điểm tự động bằng mô hình Gemini 3.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}

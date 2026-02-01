@@ -1,0 +1,44 @@
+
+KIẾN TRÚC HỆ THỐNG EDUAI STUDIO
+
+1. CẤU TRÚC TỔNG QUÁT:
+   [Client: React SPA] <---> [Backend: FastAPI] <---> [Database: PostgreSQL]
+                                 |
+                                 v
+                          [AI Engine: Gemini API]
+
+2. CÁC THÀNH PHẦN CHÍNH:
+   A. Frontend (React/TS/Tailwind):
+      - Dashboard: Quản lý danh sách đề thi.
+      - AI Exam Generator UI: Giao diện nhập prompt để sinh đề.
+      - Exam Player: Giao diện làm bài trực tuyến (Interactive Quiz).
+      - Grading Studio: Upload ảnh/PDF, preview và nhận kết quả chấm điểm.
+
+   B. Backend (FastAPI - Python):
+      - API /exams: CRUD đề thi vào PostgreSQL.
+      - API /generate-exam: Gọi Gemini model "gemini-3-flash" để tạo cấu trúc JSON đề thi.
+      - API /grade: Tiếp nhận Base64 hình ảnh, gọi Gemini model "gemini-3-pro" (Vision) 
+        để thực hiện OCR và chấm điểm logic đồng thời.
+
+   C. Database Schema (PostgreSQL):
+      - Table 'Users': id, email, password_hash, role.
+      - Table 'Exams': id, title, subject, content (JSONB), creator_id.
+      - Table 'Submissions': id, exam_id, user_id, student_image_url, score, feedback (JSONB).
+
+3. QUY TRÌNH XỬ LÝ AI:
+   - Tạo đề: User input -> System Prompt (Gemini 3 Flash) -> Structured JSON -> Database.
+   - Chấm điểm: Image bài làm + Đề gốc -> Multi-modal Prompt (Gemini 3 Pro) -> OCR & Logic Check -> JSON Result.
+
+4. CẤU TRÚC THƯ MỤC SOURCE (BACKEND MẪU):
+   /backend
+   ├── main.py              # FastAPI entry point
+   ├── database.py          # SQLAlchemy/Tortoise ORM config
+   ├── models.py            # DB Models (Users, Exams)
+   ├── schemas.py           # Pydantic models
+   ├── services/
+   │   ├── ai_service.py    # Gemini API integration
+   │   └── storage.py       # S3/Local file handling
+   └── api/
+       ├── auth.py          # Login/Register
+       ├── exam_routes.py   # Question management
+       └── grading_routes.py# AI grading endpoints
